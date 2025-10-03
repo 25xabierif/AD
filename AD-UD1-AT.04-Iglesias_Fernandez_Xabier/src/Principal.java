@@ -3,13 +3,21 @@ import java.io.File;
 public class Principal {
     public static void main(String[] args) throws Exception {
 
-        Metodos metodo = new Metodos();
+        File codec = new File("src\\","codec.txt");
+        File fichero1 = new File("src\\","cod1.txt");
+        File fichero2 = new File("src\\","cod2.txt");
+        File ficheroEnc = new File("src\\","cod1_codificado.txt");
 
-        File fichero = new File("src\\","codec.txt");
+        Metodos metodo = new Metodos(codec);
 
-        metodo.setMapa(fichero);
+        metodo.valorEncriptado('a', metodo.getClave());
 
-        System.out.println(Metodos.valorEncriptado('a', metodo.getMap()));
+        metodo.valorDesencriptado('q', metodo.getClaveDes());
+
+        metodo.encriptar(fichero1);
+        metodo.encriptar(fichero2);
+
+        metodo.desencriptar(ficheroEnc);
 
     }
 }

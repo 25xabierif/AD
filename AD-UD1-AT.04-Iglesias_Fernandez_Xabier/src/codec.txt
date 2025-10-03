@@ -1,2 +1,2 @@
-abcdefghijklmnñopqrstuvwxyz
-qwertyuiopasdfghjklñzxcvbnm
+abcdefghijk lmnñopqrstuvwxyz
+qwertyuiopa sdfghjklñzxcvbnm
