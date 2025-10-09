@@ -10,6 +10,8 @@ public final class Metodos {
     private final HashMap<Character, Character> claveDes = new HashMap<>();
 
     private final String rutaAbsoluta = "L:\\AD\\AD-UD1-AT.04-Iglesias_Fernandez_Xabier\\src\\";
+    //private final String rutaAbsolutaLinux = "/media/a25xabierif/a25xabierif_documentos/AD/AD-UD1-AT.04_encriptado_Iglesias_Fernandez_Xabier/src/";
+
 
     public Metodos(File codec){
         this.codec = codec;
@@ -26,25 +28,25 @@ public final class Metodos {
     }
 
     public void setClave(){
-        try (FileReader file = new FileReader(rutaAbsoluta+this.codec.getName())) {
+        try (FileReader file = new FileReader(rutaAbsoluta+this.codec.getName()); BufferedReader buffer = new BufferedReader(file)) {
 
-            BufferedReader buffer = new BufferedReader(file);
 
             String line1 = buffer.readLine();
             String line2 = buffer.readLine();
 
+
             for (int i = 0; i < line1.length(); i++) {
                 this.clave.put(line1.charAt(i), line2.charAt(i));
             }
+
         } catch (IOException e) {
-            System.out.println("No se puede leer el archivo.");
+            System.out.println("Mapa1. No se puede leer el archivo.");
         }
     }
 
     public void setClaveDes(){
-        try (FileReader file = new FileReader(rutaAbsoluta+this.codec.getName())) {
+        try (FileReader file = new FileReader(rutaAbsoluta+this.codec.getName()); BufferedReader buffer = new BufferedReader(file)) {
 
-            BufferedReader buffer = new BufferedReader(file);
 
             String line1 = buffer.readLine();
             String line2 = buffer.readLine();
@@ -52,17 +54,18 @@ public final class Metodos {
             for (int i = 0; i < line1.length(); i++) {
                 this.claveDes.put(line2.charAt(i), line1.charAt(i));
             }
+
         } catch (IOException e) {
-            System.out.println("No se puede leer el archivo.");
+            System.out.println("Mapa2. No se puede leer el archivo.");
         }
     }
     
     public void valorEncriptado(char c, HashMap<Character, Character> clave){
-        System.out.println(clave.get(c));
+        System.out.println(clave.getOrDefault(c, c));
     }
 
     public void valorDesencriptado(char c, HashMap<Character, Character> clave){
-        System.out.println(claveDes.get(c));
+        System.out.println(claveDes.getOrDefault(c, c));
     }
     
     public void encriptar(File fichero){
@@ -109,7 +112,7 @@ public final class Metodos {
             bufferW.close();
             writer.close();
         } catch (IOException e) {
-            System.out.println("Non se pode ler o ficheiro.");
+            System.out.println("Encriptar. Non se pode ler o ficheiro.");
         }
     }
 
@@ -157,7 +160,7 @@ public final class Metodos {
             bufferW.close();
             writer.close();
         } catch (IOException e) {
-            System.out.println("Non se pode ler o ficheiro.");
+            System.out.println("Desencriptar. Non se pode ler o ficheiro.");
         }
     }
 }
