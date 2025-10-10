@@ -11,6 +11,8 @@ public class CopiaFichero {
             } catch (IOException e) {
                 System.out.println("La copia no ha podido completarse.");
             }
+        }else{
+            System.out.println("No se localizan los archivos.");
         }
     }
 }
