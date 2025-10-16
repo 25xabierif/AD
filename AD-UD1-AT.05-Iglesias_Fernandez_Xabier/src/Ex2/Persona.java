@@ -1,6 +1,11 @@
 package Ex2;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class Persona {
 
@@ -96,13 +101,36 @@ public class Persona {
         this.altura = altura;
     }
 
-    public void escribirPersona(Persona p){
+    public void escribirPersona(Path archivo){
 
+        if(!Files.exists(archivo)){
+            try {
+                Files.createFile(archivo);
+            } catch (IOException e) {
+                System.out.println("El archivo no se ha podido crear.");
+            }
+        }
+        try {
+            String contenido = this.toString();
+            Files.write(archivo, contenido.getBytes(),StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            System.out.println("No se ha podido escribir la persona en el archivo.");
+        }
     }
 
-    public Persona leerPersona(Path archivo){
-        Persona p = new Persona();
-
-        return p;
+    public static void leerFichero(Path archivo){
+        if(Files.exists(archivo)){
+            Charset charset = StandardCharsets.UTF_8;
+            byte[] bytes;
+            try {
+                bytes = Files.readAllBytes(archivo);
+                String cadea = new String(bytes, charset);
+                System.out.println(cadea);
+            } catch (Exception e) {
+                System.out.println("No se ha podido acceder al fichero de lectura.");
+            }
+        }else{
+            System.out.println("El archivo especificad no existe.");
+        }
     }
 }
