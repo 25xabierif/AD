@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -13,12 +14,15 @@ public class App {
         int zipNum = entrada.nextInt();
         entrada.nextLine();
 
-        for(int i = 0; i < zipNum ; i++){
+        ArrayList<String> archivos = new ArrayList<String>();
+
+        /* for(int i = 0; i < zipNum ; i++){
             System.out.println("Introduce el nombre del fichero a añadir:");
             String nombre = entrada.nextLine();
             entrada.nextLine();
+            archivos.add(nombre);
             System.out.println("");
-        }
+        } */
 
         entrada.close();
     }
