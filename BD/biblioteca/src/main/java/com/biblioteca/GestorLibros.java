@@ -6,11 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.naming.spi.DirStateFactory.Result;
-
-import com.mysql.cj.protocol.Resultset;
-
-import conexiones.DBConnection;
 import conexiones.MySQLConnection;
 
 public class GestorLibros {
