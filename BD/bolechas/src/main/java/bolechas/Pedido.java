@@ -6,12 +6,12 @@ public class Pedido {
     
     private int id;
     private LocalDate fecha;
-    private int idCliente;
+    private String dniCliente;
 
     
-    public Pedido(int id, LocalDate fecha) {
-        this.id = id;
+    public Pedido(LocalDate fecha, String dniCliente) {
         this.fecha = fecha;
+        this.dniCliente = dniCliente;
     }
     public int getId() {
         return id;
@@ -19,11 +19,11 @@ public class Pedido {
     public void setId(int id) {
         this.id = id;
     }
-    public int getIdCliente(){
-        return this.idCliente;
+    public String getDniCliente(){
+        return this.dniCliente;
     }
-    public void setIdCliente(int idCliente){
-        this.idCliente = idCliente;
+    public void setDniCliente(String dniCliente){
+        this.dniCliente = dniCliente;
     }
     public LocalDate getFecha() {
         return fecha;

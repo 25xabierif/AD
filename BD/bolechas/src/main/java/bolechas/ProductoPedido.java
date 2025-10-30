@@ -24,17 +24,17 @@ public class ProductoPedido {
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
     }
-    public int getidPedido() {
+    public int getIdPedido() {
         return idPedido;
     }
-    public void setidPedido(int idPedido) {
+    public void setIdPedido(int idPedido) {
         this.idPedido = idPedido;
     }
 
     @Override
     public String toString() {
         return "ProductoPedido [getCantidad()=" + getCantidad() + ", getIdProducto()=" + getIdProducto()
-                + ", getidPedido()=" + getidPedido() + "]";
+                + ", getidPedido()=" + getIdPedido() + "]";
     }
 
 }

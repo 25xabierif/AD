@@ -1,14 +1,14 @@
 package bolechas;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.mysql.cj.protocol.Resultset;
 
 import conexiones.MySQLConnection;
 
@@ -268,6 +268,66 @@ public class GestorBD {
             System.err.println("La consulta ha fallado: "+e.getMessage());
         }
     }
+
+    public static void crearPedido(Pedido pedido){
+        try {
+            //Transformamos la fecha de pedido a una fecha legible para MySQL
+            LocalDate fechaLocal = pedido.getFecha();
+            Date fechaSQL = Date.valueOf(fechaLocal);
+
+            String crearPedido = """
+                    INSERT INTO Pedido (fecha, dni) VALUES(?,?);
+                    """;
+            PreparedStatement ps = conn.prepareStatement(crearPedido);
+            ps.setDate(1, fechaSQL);
+            ps.setString(2, pedido.getDniCliente());
+            ps.executeUpdate();
+            ps.close();
+
+            //Asignamos id al pedido en java
+            String consultaId = "SELECT id FROM Pedido WHERE dni = "+pedido.getDniCliente();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(consultaId);
+            pedido.setId(rs.getInt(1));
+
+        } catch (SQLException e) {
+            System.err.println("La creación del pedido ha fallado: "+e.getMessage());
+        }
+    }
+
+    public static void borrarPedido(int id){
+        try {
+            String borrarPedido = """
+                    DELETE FROM Pedido WHERE id = ?
+                    """;
+
+            PreparedStatement ps = conn.prepareStatement(borrarPedido);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception e) {
+            System.err.println("El borrado del pedido ha fallado: "+e.getMessage());
+        }
+    }
+
+    public static void altaProductoPedido(ProductoPedido productoPedido){
+        try {
+            String altaProductoPedido = """
+                    INSERT INTO ProductoPedido (id_producto, id_pedido, cantidad)
+                    VALUES (?,?,?);
+                    """;
+            PreparedStatement ps = conn.prepareStatement(altaProductoPedido);
+            ps.setInt(1, productoPedido.getIdProducto());
+            ps.setInt(2, productoPedido.getIdPedido());
+            ps.setInt(3, productoPedido.getCantidad());
+            ps.executeUpdate();
+            ps.close();
+
+        } catch (Exception e) {
+            System.err.println("El alta de ProductoPedido ha fallado: "+e.getMessage());
+        }
+    }
+
 }
 
 /* ProductoPedido
