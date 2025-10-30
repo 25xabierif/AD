@@ -3,13 +3,13 @@ package bolechas;
 public class ProductoPedido {
     
     private int cantidad;
-    private int id_producto;
-    private int id_pedido;
+    private int idProducto;
+    private int idPedido;
 
-    public ProductoPedido(int cantidad, int id_producto, int id_pedido) {
+    public ProductoPedido(int cantidad, int idProducto, int idPedido) {
         this.cantidad = cantidad;
-        this.id_producto = id_producto;
-        this.id_pedido = id_pedido;
+        this.idProducto = idProducto;
+        this.idPedido = idPedido;
     }
     
     public int getCantidad() {
@@ -18,23 +18,23 @@ public class ProductoPedido {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
-    public int getId_producto() {
-        return id_producto;
+    public int getIdProducto() {
+        return idProducto;
     }
-    public void setId_producto(int id_producto) {
-        this.id_producto = id_producto;
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
     }
-    public int getId_pedido() {
-        return id_pedido;
+    public int getidPedido() {
+        return idPedido;
     }
-    public void setId_pedido(int id_pedido) {
-        this.id_pedido = id_pedido;
+    public void setidPedido(int idPedido) {
+        this.idPedido = idPedido;
     }
 
     @Override
     public String toString() {
-        return "ProductoPedido [getCantidad()=" + getCantidad() + ", getId_producto()=" + getId_producto()
-                + ", getId_pedido()=" + getId_pedido() + "]";
+        return "ProductoPedido [getCantidad()=" + getCantidad() + ", getIdProducto()=" + getIdProducto()
+                + ", getidPedido()=" + getidPedido() + "]";
     }
 
 }

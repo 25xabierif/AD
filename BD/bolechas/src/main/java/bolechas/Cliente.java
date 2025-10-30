@@ -1,5 +1,8 @@
 package bolechas;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Cliente {
     
     private String nombre;
@@ -30,6 +33,4 @@ public class Cliente {
     public String toString() {
         return "Cliente [getDni()=" + getDni() + ", getNombre()=" + getNombre() + "]";
     }
-
-    
 }

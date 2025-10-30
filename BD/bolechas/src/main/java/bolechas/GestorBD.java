@@ -1,8 +1,15 @@
 package bolechas;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.mysql.cj.protocol.Resultset;
+
 import conexiones.MySQLConnection;
 
 public class GestorBD {
@@ -15,6 +22,12 @@ public class GestorBD {
     static{
         conexion = new MySQLConnection();
         conn = conexion.getConnectionName(BD);
+    }
+
+    public static boolean dniValido(String dni){
+        Pattern patronDni = Pattern.compile("\\d{8}[A-Z a-z]");
+        Matcher matcher = patronDni.matcher(dni);
+        return matcher.matches();
     }
 
     public static void createDB(){
@@ -57,12 +70,12 @@ public class GestorBD {
         try {
 
             String createT = """
-                    CREATE TABLE Producto(
+                    CREATE TABLE IF NOT EXISTS Producto(
                         `id` INT NOT NULL AUTO_INCREMENT,
-                        `descripcion` VARCHAR(255) NOT NULL,
-                        `precio` SMALLINT NOT NULL,
                         `nombre` VARCHAR(100) NOT NULL,
-                        `PRIMARY` KEY (id)
+                        `precio` FLOAT NOT NULL,
+                        `descripcion` VARCHAR(255) NOT NULL,
+                        `PRIMARY` KEY (id),
                         UNIQUE `nombre_unico` (nombre(100)))
                     """;
             
@@ -151,4 +164,125 @@ public class GestorBD {
 
     }
 
+    public static void altaCliente(Cliente cliente){
+        try {
+
+            String alta = """
+                    INSERT INTO Cliente (nombre, dni)
+                    VALUES (?,?);
+                    """;
+            PreparedStatement ps = conn.prepareStatement(alta);
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getDni());
+            ps.executeUpdate();
+            ps.close();
+
+        } catch (SQLException e) {
+            System.err.println("No se ha podido registrar el cliente: "+e.getMessage());
+        }
+    }
+
+    public static void bajaCliente(String dni){
+        try {
+            String baja = """
+                DELETE FROM Cliente WHERE dni = ?;
+                """;
+            PreparedStatement ps = conn.prepareStatement(baja);
+            ps.setString(1, dni);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println("No se ha podido dar de baja el cliente: "+e.getMessage());
+        }
+        
+    }
+
+    public static void modificarCliente(String nombre, String dni){
+        try {
+            String alterC = """
+                    UPDATE Cliente
+                    SET dni = ?, nombre = ?
+                    """;
+            PreparedStatement ps = conn.prepareStatement(alterC);
+            ps.setString(1, dni);
+            ps.setString(2, nombre);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println("No se han podido modificar los datos del cliente: "+e.getMessage());
+        }
+    }
+
+    public static void registrarProducto(Producto producto){
+        try {
+            String nuevoP = """
+                    INSERT INTO Producto (nombre,precio,descripcion)
+                    VALUES (?,?,?);
+                    """;
+            PreparedStatement ps = conn.prepareStatement(nuevoP);
+            ps.setString(1, producto.getNombre());
+            ps.setFloat(2, producto.getPrecio());
+            ps.setString(3, producto.getDescripcion());
+            ps.executeUpdate();
+            ps.close();
+
+            //Asignamos id de producto al objeto
+            String select = "SELECT id FROM Producto WHERE nombre = "+producto.getNombre();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(select);
+            producto.setId(rs.getInt(1));
+
+        } catch (SQLException e) {
+            System.err.println("No se ha podiddo registrar el nuevo producto: "+e.getMessage());
+        }
+    }
+
+    public static void borrarProducto (int id){
+        try {
+            String borrarP = """
+                    DELETE FROM Producto WHERE id = ?;
+                    """;
+            PreparedStatement ps = conn.prepareStatement(borrarP);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            System.err.println("No se ha podido borrar el producto: "+e.getMessage());
+        }
+    }
+
+    public static void consultaCliente(String dni){
+        try {
+            String consulta = """
+                    SELECT * FROM Cliente WHERE dni = ?;
+                    """;
+
+            PreparedStatement ps = conn.prepareStatement(consulta);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                System.out.println(rs.getString(1));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("La consulta ha fallado: "+e.getMessage());
+        }
+    }
 }
+
+/* ProductoPedido
+    id_producto
+    id_pedido
+    cantidad */
+/* Producto
+    id
+    nombre
+    precio FLOAT
+    descripcion */
+/* Cliente
+    dni 
+    nombre 
+/* Pedido
+	id 
+	fecha DATE 
+	dni VARCHAR(9) */
