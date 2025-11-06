@@ -70,18 +70,19 @@ public class GestorBD {
         try {
 
             String createT = """
-                    CREATE TABLE IF NOT EXISTS Producto(
-                        `id` INT NOT NULL AUTO_INCREMENT,
-                        `nombre` VARCHAR(100) NOT NULL,
-                        `precio` FLOAT NOT NULL,
-                        `descripcion` VARCHAR(255) NOT NULL,
-                        `PRIMARY` KEY (id),
-                        UNIQUE `nombre_unico` (nombre(100)))
+                    CREATE TABLE IF NOT EXISTS `Producto`
+                        (`id` INT NOT NULL AUTO_INCREMENT,
+                        `nombre` VARCHAR(32) NOT NULL ,
+                        `precio` DECIMAL(8,2) NOT NULL ,
+                        `descripcion` TINYTEXT NULL ,
+                        PRIMARY KEY (`id`), UNIQUE (`nombre`))
                     """;
             
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createT);
             stmt.close();
+
+            System.out.println("Tabla Producto creada con éxito!");
 
         } catch (Exception e) {
             System.err.println("La creación de la tabla producto ha fallado: "+e.getMessage());
@@ -104,6 +105,8 @@ public class GestorBD {
             stmt.executeUpdate(createT);
             stmt.close();
 
+            System.out.println("Tabla Cliente creada con éxito!");
+
         } catch (Exception e) {
             System.err.println("La creación de la tabla Cliente ha fallado: "+e.getMessage());
         }
@@ -119,12 +122,14 @@ public class GestorBD {
 	                id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	                fecha DATE NOT NULL,
 	                dni VARCHAR(9) NOT NULL,
-	                CONSTRAINT fk_cliente FOREIGN KEY (dni) REFERENCES cliente(dni))
+	                CONSTRAINT `fk_cliente` FOREIGN KEY (dni) REFERENCES Cliente(dni))
                 """;
             
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createT);
             stmt.close();
+
+            System.out.println("Tabla Pedido creada con éxito!");
 
         } catch (Exception e) {
             System.err.println("La creación de la tabla Pedido ha fallado: "+e.getMessage());
@@ -140,17 +145,19 @@ public class GestorBD {
                     id_producto INT NOT NULL,
                     id_pedido INT NOT NULL,
                     cantidad INT NOT NULL,
-                    CONSTRAINT fk_producto FOREIGN KEY (id_producto) REFERENCES Producto(id),
-                    CONSTRAINT fk_pedido FOREIGN KEY (id_pedido) REFERENCES Pedido(id),
-                    CONSTRAINT pk_pedido PRIMARY KEY (id_producto, id_pedido)
+                    PRIMARY KEY (id_producto, id_pedido),
+                    CONSTRAINT `fk_producto` FOREIGN KEY (id_producto) REFERENCES Producto(id),
+                    CONSTRAINT `fk_pedido` FOREIGN KEY (id_pedido) REFERENCES Pedido(id))
                 """;
             
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(createT);
             stmt.close();
 
+            System.out.println("Tabla ProductoPedido creada con éxito!");
+
         } catch (Exception e) {
-            System.err.println("La creación de la tabla producto ha fallado: "+e.getMessage());
+            System.err.println("La creación de la tabla ProductoPedido ha fallado: "+e.getMessage());
         }
 
     }
@@ -323,11 +330,26 @@ public class GestorBD {
             ps.executeUpdate();
             ps.close();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.err.println("El alta de ProductoPedido ha fallado: "+e.getMessage());
         }
     }
+    
 
+    public static void consultarPedidoCliente(String dni){
+        try {
+            String consultaPedidos = """
+                    
+                    """;
+            PreparedStatement ps = conn.prepareStatement(consultaPedidos);
+            ps.setString(1, dni);
+            ps.executeQuery();
+            ps.close();
+                    
+        } catch (Exception e) {
+            System.err.println("La consulta de los pedidos del cliente ha fallado: "+e.getMessage());
+        }
+    }
 }
 
 /* ProductoPedido
