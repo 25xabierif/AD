@@ -339,7 +339,19 @@ public class GestorBD {
     public static void consultarPedidoCliente(String dni){
         try {
             String consultaPedidos = """
-                    
+                    SELECT 
+                        c.nombre AS nombre_cliente,
+                        p.id AS id_pedido,
+                        p.fecha,
+                        GROUP_CONCAT(pr.nombre SEPARATOR ', ') AS productos,
+                        SUM(pr.precio * pp.cantidad) AS total_pedido
+                    FROM Cliente AS c
+                    JOIN Pedido AS p ON c.dni = p.dni
+                    JOIN ProductoPedido AS pp ON p.id = pp.id_pedido
+                    JOIN Producto AS pr ON pp.id_producto = pr.id
+                    WHERE c.dni = ? 
+                    GROUP BY c.nombre, p.id, p.fecha
+                    ORDER BY p.fecha DESC;
                     """;
             PreparedStatement ps = conn.prepareStatement(consultaPedidos);
             ps.setString(1, dni);
@@ -350,21 +362,19 @@ public class GestorBD {
             System.err.println("La consulta de los pedidos del cliente ha fallado: "+e.getMessage());
         }
     }
-}
 
-/* ProductoPedido
-    id_producto
-    id_pedido
-    cantidad */
-/* Producto
-    id
-    nombre
-    precio FLOAT
-    descripcion */
-/* Cliente
-    dni 
-    nombre 
-/* Pedido
-	id 
-	fecha DATE 
-	dni VARCHAR(9) */
+    public static void eliminarBD(){
+        try{
+            String eraseBD = "DROP DATABASE bolechasX;";
+
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(eraseBD);
+            stmt.close();
+
+            System.out.println("La BD ha sido eliminada con éxito.");
+
+        } catch (SQLException e){
+            System.err.println("La BD no ha podido ser borrada: "+e.getMessage());
+        }
+    }
+}
