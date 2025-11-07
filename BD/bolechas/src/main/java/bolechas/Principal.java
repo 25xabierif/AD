@@ -6,12 +6,9 @@ import java.util.Scanner;
 public class Principal {
     public static void main(String[] args) {
         Scanner entrada = new Scanner(System.in);
-        System.out.println("Quiere crear la base de datos? S/N");
-        if(entrada.next().equals("S")){
-            GestorBD.createDB();
-        }else{
-            System.exit(0);
-        }
+
+        /* GestorBD.createDB();
+        GestorBD.innitConnections();
 
         System.out.println("Creando las tablas...");
         System.out.println("...");
@@ -91,6 +88,8 @@ public class Principal {
         ProductoPedido prodP9 = new ProductoPedido(1, pandeireta.getId(), pedidoA2.getId());
         ProductoPedido prodP10 = new ProductoPedido(4, flautin.getId(), pedidoA3.getId());
 
+        System.out.println("Pedidos registrados con éxito!");
+
         GestorBD.altaProductoPedido(prodP1);
         GestorBD.altaProductoPedido(prodP2);
         GestorBD.altaProductoPedido(prodP3);
@@ -100,11 +99,29 @@ public class Principal {
         GestorBD.altaProductoPedido(prodP7);
         GestorBD.altaProductoPedido(prodP8);
         GestorBD.altaProductoPedido(prodP9);
-        GestorBD.altaProductoPedido(prodP10);
+        GestorBD.altaProductoPedido(prodP10); */
 
+        boolean seguir = true;
+        
+        while (seguir) {
+
+            System.out.println("\nIntroduzca un DNI y obtendrá los pedidos y productos asociados: (Introduzca 'Exit' para salir)");
+            String dni = entrada.next();
+            if(dni.equals("Exit")){
+                break;
+            }
+            if(GestorBD.dniValido(dni)){
+                GestorBD.consultarPedidoCliente(dni);
+            }else{
+                System.out.println("Introduzca un dni válido.");
+            }
+            entrada.nextLine();
+        }
+        
         
 
-        GestorBD.cerrarConexion();
+
+        /* GestorBD.eliminarBD(); */
 
         entrada.close();
     }

@@ -7,13 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.mysql.cj.protocol.Resultset;
 
 import conexiones.MySQLConnection;
 
 public class GestorBD {
-    
+
     private static final String BD = "bolechasX";
 
     private static MySQLConnection conexion;
@@ -24,10 +24,9 @@ public class GestorBD {
         conn = conexion.getConnectionName(BD);
     }
 
+
     public static boolean dniValido(String dni){
-        Pattern patronDni = Pattern.compile("\\d{8}[A-Z a-z]");
-        Matcher matcher = patronDni.matcher(dni);
-        return matcher.matches();
+        return dni != null && dni.matches("\\d{8}[A-Za-z]");
     }
 
     public static void createDB(){
@@ -50,31 +49,40 @@ public class GestorBD {
                     FLUSH PRIVILEGES;
                     """;
 
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(createDB);
-            stmt.executeUpdate(createUser);
-            stmt.executeUpdate(grantPriv);
-            stmt.executeUpdate(flushPriv);
-            stmt.close();
+            try (Statement stmt = conn.createStatement()) {
+                stmt.executeUpdate(createDB);
+                stmt.executeUpdate(createUser);
+                stmt.executeUpdate(grantPriv);
+                stmt.executeUpdate(flushPriv);
+            }
 
             System.out.println("BD creada con éxito!");
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.err.println("No se ha podido conectar a mysql: "+e.getMessage());
         }
 
     }
 
+    public static void innitConnections(){
+        conn = conexion.getConnectionName(BD);
+        if(conn == null){
+            System.err.println("No se ha podido conectar a la BD " + BD + ". Comprueba credenciales y que la BD exista.");
+        } else {
+            System.out.println("Conexión a " + BD + " inicializada.");
+        }
+    }
+
     public static void createTableProducto(){
 
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
 
             String createT = """
-                    CREATE TABLE IF NOT EXISTS `Producto`
+                    CREATE TABLE IF NOT EXISTS Producto
                         (`id` INT NOT NULL AUTO_INCREMENT,
-                        `nombre` VARCHAR(32) NOT NULL ,
-                        `precio` DECIMAL(8,2) NOT NULL ,
-                        `descripcion` TINYTEXT NULL ,
+                        nombre VARCHAR(32) NOT NULL ,
+                        precio DECIMAL(8,2) NOT NULL ,
+                        descripcion TINYTEXT NULL ,
                         PRIMARY KEY (`id`), UNIQUE (`nombre`))
                     """;
             
@@ -92,7 +100,7 @@ public class GestorBD {
 
     public static void createTableCliente(){
 
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
 
             String createT = """
                     CREATE TABLE IF NOT EXISTS Cliente(
@@ -115,7 +123,7 @@ public class GestorBD {
 
     public static void createTablePedido(){
 
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
 
             String createT = """
                 CREATE TABLE IF NOT EXISTS Pedido(
@@ -139,7 +147,7 @@ public class GestorBD {
 
     public static void createTableProductoPedido(){
 
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String createT = """
                 CREATE TABLE IF NOT EXISTS ProductoPedido(
                     id_producto INT NOT NULL,
@@ -162,17 +170,8 @@ public class GestorBD {
 
     }
 
-    public static void cerrarConexion(){
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            System.err.println("La conexión no se ha cerrado: "+e.getMessage());
-        }
-
-    }
-
     public static void altaCliente(Cliente cliente){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
 
             String alta = """
                     INSERT INTO Cliente (nombre, dni)
@@ -190,7 +189,7 @@ public class GestorBD {
     }
 
     public static void bajaCliente(String dni){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String baja = """
                 DELETE FROM Cliente WHERE dni = ?;
                 """;
@@ -205,7 +204,7 @@ public class GestorBD {
     }
 
     public static void modificarCliente(String nombre, String dni){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String alterC = """
                     UPDATE Cliente
                     SET dni = ?, nombre = ?
@@ -221,9 +220,9 @@ public class GestorBD {
     }
 
     public static void registrarProducto(Producto producto){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String nuevoP = """
-                    INSERT INTO Producto (nombre,precio,descripcion)
+                    INSERT INTO Producto (nombre, precio, descripcion)
                     VALUES (?,?,?);
                     """;
             PreparedStatement ps = conn.prepareStatement(nuevoP);
@@ -234,18 +233,27 @@ public class GestorBD {
             ps.close();
 
             //Asignamos id de producto al objeto
-            String select = "SELECT id FROM Producto WHERE nombre = "+producto.getNombre();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(select);
-            producto.setId(rs.getInt(1));
+            String select = """
+            SELECT id FROM Producto WHERE nombre = ?
+                    """;
+            PreparedStatement ps2 = conn.prepareStatement(select);
+            ps2.setString(1, producto.getNombre());
+            ResultSet rs = ps2.executeQuery();
+
+            if(rs.next()){
+                producto.setId(rs.getInt(1));
+            }
+
+            rs.close();
+            ps2.close();
 
         } catch (SQLException e) {
-            System.err.println("No se ha podiddo registrar el nuevo producto: "+e.getMessage());
+            System.err.println("No se ha podido registrar el nuevo producto: "+e.getMessage());
         }
     }
 
     public static void borrarProducto (int id){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String borrarP = """
                     DELETE FROM Producto WHERE id = ?;
                     """;
@@ -259,7 +267,7 @@ public class GestorBD {
     }
 
     public static void consultaCliente(String dni){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String consulta = """
                     SELECT * FROM Cliente WHERE dni = ?;
                     """;
@@ -277,7 +285,7 @@ public class GestorBD {
     }
 
     public static void crearPedido(Pedido pedido){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             //Transformamos la fecha de pedido a una fecha legible para MySQL
             LocalDate fechaLocal = pedido.getFecha();
             Date fechaSQL = Date.valueOf(fechaLocal);
@@ -292,10 +300,13 @@ public class GestorBD {
             ps.close();
 
             //Asignamos id al pedido en java
-            String consultaId = "SELECT id FROM Pedido WHERE dni = "+pedido.getDniCliente();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(consultaId);
-            pedido.setId(rs.getInt(1));
+            String consultaId = "SELECT id FROM Pedido WHERE dni = ?";
+            PreparedStatement ps2 = conn.prepareStatement(consultaId);
+            ps2.setString(1, pedido.getDniCliente());
+            ResultSet rs = ps2.executeQuery();
+            while(rs.next()){
+                pedido.setId(rs.getInt("id"));
+            }
 
         } catch (SQLException e) {
             System.err.println("La creación del pedido ha fallado: "+e.getMessage());
@@ -303,7 +314,7 @@ public class GestorBD {
     }
 
     public static void borrarPedido(int id){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String borrarPedido = """
                     DELETE FROM Pedido WHERE id = ?
                     """;
@@ -318,7 +329,7 @@ public class GestorBD {
     }
 
     public static void altaProductoPedido(ProductoPedido productoPedido){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String altaProductoPedido = """
                     INSERT INTO ProductoPedido (id_producto, id_pedido, cantidad)
                     VALUES (?,?,?);
@@ -337,7 +348,7 @@ public class GestorBD {
     
 
     public static void consultarPedidoCliente(String dni){
-        try {
+        try (Connection conn = conexion.getConnectionName(BD)) {
             String consultaPedidos = """
                     SELECT 
                         c.nombre AS nombre_cliente,
@@ -355,8 +366,31 @@ public class GestorBD {
                     """;
             PreparedStatement ps = conn.prepareStatement(consultaPedidos);
             ps.setString(1, dni);
-            ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
+
+            System.out.println("==========================================================================");
+            System.out.printf("%-20s %-10s %-12s %-40s %-10s%n",
+                    "Cliente", "ID Pedido", "Fecha", "Productos", "Total (€)");
+            System.out.println("==========================================================================");
+
+            // Filas
+            while (rs.next()) {
+                String cliente = rs.getString("nombre_cliente");
+                int idPedido = rs.getInt("id_pedido");
+                Date fecha = rs.getDate("fecha");
+                String productos = rs.getString("productos");
+                double total = rs.getDouble("total_pedido");
+
+                // Formato con printf: columnas alineadas
+                System.out.printf("%-20s %-10d %-12s %-40s %-10.2f%n",
+                        cliente, idPedido, fecha.toString(), productos, total);
+            }
+
+            System.out.println("==========================================================================");
+
+
             ps.close();
+
                     
         } catch (Exception e) {
             System.err.println("La consulta de los pedidos del cliente ha fallado: "+e.getMessage());
@@ -364,7 +398,7 @@ public class GestorBD {
     }
 
     public static void eliminarBD(){
-        try{
+        try (Connection conn = conexion.getConnectionName(BD)){
             String eraseBD = "DROP DATABASE bolechasX;";
 
             Statement stmt = conn.createStatement();
