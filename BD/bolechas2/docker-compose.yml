@@ -7,7 +7,6 @@ services:
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: bolechasMaria
       MARIADB_USER: usuario
       MARIADB_PASSWORD: usuario123
     ports:
@@ -20,8 +19,8 @@ services:
     container_name: phpmyadmin
     restart: always
     environment:
-      PMA_HOST: mysql, mariadb
-      PMA_PORT: 3307, 3306
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
       PMA_ARBITRARY: 1
     ports:
       - "8080:80"

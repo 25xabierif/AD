@@ -10,7 +10,7 @@ public class MariaDBConnection implements DBConnection{
 
     /* Sin archivo aplicacion.properties */
 
-    /* private static final String URL = "jdbc:mariadb://localhost:3306/bibliotecaXabierI";
+    /* private static final String URL = "jdbc:mariadb://localhost:3307/bolechas";
     private static final String USER = "usuario";
     private static final String PASSWORD = "usuario123"; */
 
