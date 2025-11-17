@@ -1,0 +1,6 @@
+com/alumnado/GestorAlumnado.class
+com/alumnado/Principal.class
+conexiones/DBConnection.class
+com/alumnado/GestorDAM2.class
+conexiones/PostgreSQLConnection.class
+com/alumnado/ConfigLoader.class

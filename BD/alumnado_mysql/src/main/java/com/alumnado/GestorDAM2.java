@@ -5,24 +5,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import conexiones.PostgreSQLConnection;
+import conexiones.MySQLConnection;
 
 public class GestorDAM2 {
 
 
     public static void createDB(){
-        try (Connection conn = new PostgreSQLConnection().getConnectionServer();
+        try (Connection conn = new MySQLConnection().getConnectionServer();
         Statement stmt = conn.createStatement()) {
+            
+            String createDB = """
+                    CREATE DATABASE IF NOT EXISTS dam2
+                        CHARACTER SET utf8mb4
+                        COLLATE utf8mb4_general_ci;
+                    """;
+            
+            stmt.executeUpdate(createDB);
 
-            String BD = ConfigLoader.get("postgresql.bd");
-            String USER = ConfigLoader.get("postgresql.user");
-
-            String check = "SELECT 1 FROM pg_database WHERE datname = '"+BD+"'";
-            ResultSet rs = stmt.executeQuery(check);
-            if(!rs.next()){
-                stmt.executeUpdate("CREATE DATABASE "+BD+" WITH OWNER = "+USER+" ENCODING 'UTF8' TEMPLATE template0;");
-                System.out.println("Base de datos DAM2 creada satisfactoriamente.");
-            }
+            System.out.println("Base de datos DAM2 creada satisfactoriamente.");
   
         } catch (SQLException e) {
             System.err.println("La creación de la BD ha fallado: "+e.getMessage());
@@ -32,16 +32,16 @@ public class GestorDAM2 {
 
     public static void createTableAlumnado(){
 
-        try(Connection conn = new PostgreSQLConnection().getConnection();
+        try(Connection conn = new MySQLConnection().getConnection();
         Statement stmt = conn.createStatement()){
 
             String createT = """
-                    CREATE TABLE IF NOT EXISTS Alumnado(
-                        id  serial,
-                        nome varchar (40),
-                        edad int,
-                        email varchar (60),
-                        primary key (id)
+                    CREATE TABLE IF NOT EXISTS `Alumnado` (
+                    `id` INT NOT NULL AUTO_INCREMENT ,
+                    `nome` VARCHAR(40) NOT NULL ,
+                    `edad` TINYINT NOT NULL ,
+                    `email` VARCHAR(60) NOT NULL ,
+                    PRIMARY KEY (`id`)
                     );
                     """;
             
@@ -56,7 +56,7 @@ public class GestorDAM2 {
 
     public static void selectAlumnos(){
 
-        try (Connection conn = new PostgreSQLConnection().getConnection();
+        try (Connection conn = new MySQLConnection().getConnection();
         Statement stmt = conn.createStatement()) {
            
             String selectA = "SELECT * FROM Alumnado;";
@@ -79,7 +79,7 @@ public class GestorDAM2 {
     public static void modificarAlumno(int id, String nome, int edad, String email){
         String updateT = "UPDATE Alumnado SET nome = ?, edad = ?, email = ? WHERE id = ?;";
 
-        try (Connection conn = new PostgreSQLConnection().getConnection();
+        try (Connection conn = new MySQLConnection().getConnection();
         PreparedStatement ps = conn.prepareStatement(updateT)) {
             
             ps.setString(1, nome);
@@ -97,7 +97,7 @@ public class GestorDAM2 {
     public static void eliminarAlumno(int id){
 
         String deleteA = "DELETE FROM Alumnado WHERE id = ?;";
-        try (Connection conn = new PostgreSQLConnection().getConnection();
+        try (Connection conn = new MySQLConnection().getConnection();
         PreparedStatement ps = conn.prepareStatement(deleteA)) {
            
             ps.setInt(1, id);
