@@ -79,6 +79,8 @@ public class RepositorioTareas{
      * @param id
      */
     public void marcarCompletada(int id){
-        tareas.get(id).setCompletada(true);
+        if(tareas.get(id)!=null){
+            tareas.get(id).setCompletada(true);
+        }
     }
 }
