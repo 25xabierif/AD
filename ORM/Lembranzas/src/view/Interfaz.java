@@ -2,6 +2,9 @@ package view;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import controller.AppTareas;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -15,8 +18,8 @@ public class Interfaz extends JFrame{
     private JButton eliminarTarea;
     private JButton buscarTarea;
     private JButton salir;
-    private DefaultTableModel modeloTabla;
     private JTable tabla;
+    private DefaultTableModel modelo;
     
     
     public Interfaz(){
@@ -28,8 +31,8 @@ public class Interfaz extends JFrame{
         vista.setLayout(new BorderLayout());
 
         botonera = new JPanel();
-        modeloTabla = new DefaultTableModel();
-        tabla = new JTable(modeloTabla);
+        modelo = AppTareas.crearTabla();
+        tabla = new JTable(modelo);
 
         resultados = new JScrollPane(tabla);
 
@@ -63,6 +66,16 @@ public class Interfaz extends JFrame{
         botonera.add(salir);
 
         vista.setVisible(true);
+    }
+
+    public void addRow(Object[] fila){
+        this.modelo.addRow(fila);
+    }
+    public void limpiarTabla(){
+        int filas = modelo.getRowCount();
+        for(int i = 0 ; i < filas ; i++){
+            modelo.removeRow(i);
+        }
     }
 
     public void addFuncListar(ActionListener listener){

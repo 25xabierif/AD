@@ -29,9 +29,27 @@ public class AppTareas{
         
     }
 
-    public DefaultTableModel crearTabla() {
+    public static DefaultTableModel crearTabla() {
+
+        Tarea t1 = new Tarea("Tarea1", "Vemos que tal va");
+        Tarea t2 = new Tarea("Tarea2","Segunda tarea");
+        Tarea t3 = new Tarea("Tarea3", "Outra tarefa mais");
+        Tarea t4 = new Tarea("Tarea4", "4444444444444444444");
+        Tarea t5 = new Tarea("Tarea5", "55555555555555");
+        Tarea t6 = new Tarea("Tarea6", "66666666666");
+        Tarea t7 = new Tarea("Tarea7", "777");
+        Tarea t8 = new Tarea("Tarea8", "888888888888888888888");
         
         ArrayList<Tarea> tareas = RepositorioTareas.getInstance().obtenerTodas();
+
+        tareas.add(t1);
+        tareas.add(t2);
+        tareas.add(t3);
+        tareas.add(t4);
+        tareas.add(t5);
+        tareas.add(t6);
+        tareas.add(t7);
+        tareas.add(t8);
 
         String[] nombresColumnas = {"ID","Título","Descripción","Completada"};
 
@@ -49,8 +67,11 @@ public class AppTareas{
     }
 
     private void listar(){
-        this.INTERFAZ.repaint();
-        this.INTERFAZ.revalidate();
+        this.INTERFAZ.limpiarTabla();
+        for (Tarea tarea : RepositorioTareas.getInstance().obtenerTodas()) {
+            Object[] nuevaFila = {tarea.getId(), tarea.getTitulo(), tarea.getDescripcion(), tarea.isCompletada()};
+            this.INTERFAZ.addRow(nuevaFila);
+        }
     }
 
     private void crear(){
@@ -73,7 +94,9 @@ public class AppTareas{
     }
 
     private void marcar(){
-
+        ArrayList<Tarea> tareas = RepositorioTareas.getInstance().obtenerTodas();
+        String idTarea = JOptionPane.showInputDialog(INTERFAZ, null, "Ingrese un id:", JOptionPane.QUESTION_MESSAGE);
+        tareas.get(Integer.parseInt(idTarea)-1).setCompletada(true);
     }
 
     private void eliminar(){}
