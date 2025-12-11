@@ -1,14 +1,10 @@
 package dragolandia.controller;
 
 import org.hibernate.*;
-import org.hibernate.cfg.Configuration;
 
 import dragolandia.model.Mago;
 
 public class GestorMago {
-
-
-    private Session session = null;
     
     /**
      * Método para añadir mago a la BD que devuelve true en caso de haberlo conseguido
@@ -17,19 +13,24 @@ public class GestorMago {
      */
     public boolean addMago(String nombre, int vida, int nivelMagia){
         Mago mago = new Mago(nombre,vida,nivelMagia);
-        try (SessionFactory factory = new Configuration().configure().buildSessionFactory()) {
+        
+        Transaction tx = null;
 
-            session = factory.getCurrentSession();
-            Transaction tx = session.beginTransaction();
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            
+            tx = session.beginTransaction();
             session.persist(mago);
             tx.commit();
-            System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId());
+
+            System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+".");
             return true;
 
         } catch (Exception e) {
-            System.out.println("No se ha podido añadir el mago: "+e.getMessage());
+            if(tx != null) tx.rollback();
+            System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
             return false;
         }
+
     }
 
     /**
@@ -38,23 +39,31 @@ public class GestorMago {
      * @return
      */
     public boolean updateHP(int id, int hp){
-        try (SessionFactory factory = new Configuration().configure().buildSessionFactory()) {
+        
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             
-            session = factory.getCurrentSession();
-            Transaction tx = session.beginTransaction();
-            Mago mago = (Mago) session.get(Mago.class, id);
+            tx = session.beginTransaction();
+
+            Mago mago = session.get(Mago.class, id);
+
+            if(mago == null){
+                System.err.println("No se encontró el mago con id: "+id);
+                return false;
+            }
+
             mago.setVida(hp);
-            Mago magoNuevaHP = (Mago) session.merge(mago);
+
             tx.commit();
-
-            System.out.println("Nuevo hp: "+magoNuevaHP.getVida());
-
+            System.out.println("HP actual: "+mago.getVida());
             return true;
 
         } catch (Exception e) {
-            System.out.println("No se ha podido actualizar la vida del mago: "+e.getMessage());
+            if(tx != null) tx.rollback();
+            System.err.println("No se ha podido actualizar la vida del mago: "+e.getMessage());
             return false;
         }
+
     }
 
     /**
@@ -64,13 +73,66 @@ public class GestorMago {
      * @param nombre
      * @return
      */
-    public boolean updateMageName(int id, String nombre){
-        try (SessionFactory factory = new Configuration().configure().buildSessionFactory()) {
+    public boolean updateName(int id, String nombre){
+        
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             
+            tx = session.beginTransaction();
+
+            Mago mago = session.get(Mago.class, id);
+            if(mago == null){
+                System.err.println("No se encontró el mago con id: "+id);
+                return false;
+            }
+
+            mago.setNombre(nombre);
+
+            tx.commit();
+            System.out.println("Nuevo nombre: "+mago.getNombre()+".");
             return true;
+
         } catch (Exception e) {
+            if(tx != null) tx.rollback();
+            System.err.println("No se ha podido actualizar el nombre del mago: "+e.getMessage());
             return false;
         }
+
+    }
+
+    /**
+     * Método que selecciona un mago por su id y le actualiza el nivel de magia
+     * Devuelve true/false en caso de que la operación haya sido realizada con éxito
+     * @param id
+     * @param nivelMagia
+     * @return
+     */
+    public boolean updateMagicLevel(int id, int nivelMagia){
+        
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            
+            tx = session.beginTransaction();
+
+            Mago mago = session.get(Mago.class, id);
+
+            if(mago == null){
+                System.err.println("No se encontró el mago con id: "+id);
+                return false;
+            }
+
+            mago.setNivelMagia(nivelMagia);
+
+            tx.commit();
+            System.out.println("Nuevo nivel de magia: "+mago.getNivelMagia()+".");
+            return true;
+
+        } catch (Exception e) {
+            if(tx!=null) tx.rollback();
+            System.err.println("No se ha podido actualizar el nivel de magia del mago: "+e.getMessage());
+            return false;
+        }
+
     }
 
 }
