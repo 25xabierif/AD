@@ -12,25 +12,30 @@ public class GestorMago {
      * @return
      */
     public boolean addMago(String nombre, int vida, int nivelMagia){
-        Mago mago = new Mago(nombre,vida,nivelMagia);
-        
-        Transaction tx = null;
 
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        boolean added = false;
+
+        if(validarMago(nombre, vida, nivelMagia)){
+
+            Mago mago = new Mago(nombre,vida,nivelMagia);
             
-            tx = session.beginTransaction();
-            session.persist(mago);
-            tx.commit();
+            Transaction tx = null;
 
-            System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+".");
-            return true;
+            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+                
+                tx = session.beginTransaction();
+                session.persist(mago);
+                tx.commit();
 
-        } catch (Exception e) {
-            if(tx != null) tx.rollback();
-            System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
-            return false;
+                added = true;
+                System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+".");
+            } catch (Exception e) {
+                if(tx != null) tx.rollback();
+                System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
+                return added;
+            }
         }
-
+        return added;
     }
 
     /**
@@ -40,6 +45,8 @@ public class GestorMago {
      */
     public boolean updateHP(int id, int hp){
         
+        boolean actualizado = false;
+
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             
@@ -47,23 +54,21 @@ public class GestorMago {
 
             Mago mago = session.get(Mago.class, id);
 
-            if(mago == null){
-                System.err.println("No se encontró el mago con id: "+id);
-                return false;
+            if(mago != null){
+                mago.setVida(hp);
+                session.merge(mago);
+                tx.commit();
+
+                actualizado = true;
+                System.out.println("HP actual: "+mago.getVida());
             }
-
-            mago.setVida(hp);
-
-            tx.commit();
-            System.out.println("HP actual: "+mago.getVida());
-            return true;
 
         } catch (Exception e) {
             if(tx != null) tx.rollback();
             System.err.println("No se ha podido actualizar la vida del mago: "+e.getMessage());
-            return false;
+            return actualizado;
         }
-
+        return actualizado;
     }
 
     /**
@@ -75,29 +80,30 @@ public class GestorMago {
      */
     public boolean updateName(int id, String nombre){
         
+        boolean actualizado = false;
+
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             
             tx = session.beginTransaction();
 
             Mago mago = session.get(Mago.class, id);
-            if(mago == null){
-                System.err.println("No se encontró el mago con id: "+id);
-                return false;
+            if(mago != null){
+                mago.setNombre(nombre);
+                session.merge(mago);
+                tx.commit();
+
+                actualizado = true;
+                System.out.println("Nuevo nombre: "+mago.getNombre()+".");
             }
 
-            mago.setNombre(nombre);
-
-            tx.commit();
-            System.out.println("Nuevo nombre: "+mago.getNombre()+".");
-            return true;
 
         } catch (Exception e) {
             if(tx != null) tx.rollback();
             System.err.println("No se ha podido actualizar el nombre del mago: "+e.getMessage());
-            return false;
+            return actualizado;
         }
-
+        return actualizado;
     }
 
     /**
@@ -109,6 +115,8 @@ public class GestorMago {
      */
     public boolean updateMagicLevel(int id, int nivelMagia){
         
+        boolean actualizado = false;
+
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             
@@ -116,23 +124,47 @@ public class GestorMago {
 
             Mago mago = session.get(Mago.class, id);
 
-            if(mago == null){
-                System.err.println("No se encontró el mago con id: "+id);
-                return false;
+            if(mago != null){
+                mago.setNivelMagia(nivelMagia);
+                session.merge(mago);
+                tx.commit();
+
+                actualizado = true;
+                System.out.println("Nuevo nivel de magia: "+mago.getNivelMagia()+".");
             }
 
-            mago.setNivelMagia(nivelMagia);
-
-            tx.commit();
-            System.out.println("Nuevo nivel de magia: "+mago.getNivelMagia()+".");
-            return true;
 
         } catch (Exception e) {
             if(tx!=null) tx.rollback();
             System.err.println("No se ha podido actualizar el nivel de magia del mago: "+e.getMessage());
-            return false;
+            return actualizado;
         }
-
+        return actualizado;
     }
 
+    /**
+     * Método que comprueba que los parámetros del mago introducido cumplan unos estándares mínimos
+     * @param nombre
+     * @param vida
+     * @param nivelMagia
+     * @return
+     */
+    private boolean validarMago(String nombre, int vida, int nivelMagia) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            System.err.println("El nombre no puede estar vacío.");
+            return false;
+        }
+        
+        if (vida <= 0) {
+            System.err.println("La vida debe ser mayor que 0.");
+            return false;
+        }
+        
+        if (nivelMagia <= 0) {
+            System.err.println("El nivel de magia debe ser mayor que 0.");
+            return false;
+        }
+        
+        return true;
+    }
 }

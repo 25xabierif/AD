@@ -1,5 +1,5 @@
 package dragolandia.controller;
 
-public class GestionDragolandia {
+public class GestorBosque {
     
 }

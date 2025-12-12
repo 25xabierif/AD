@@ -28,6 +28,7 @@
         <mapping class="dragolandia.model.Bosque"/>
         <mapping class="dragolandia.model.Mago"/>
         <mapping class="dragolandia.model.Monstruo"/>
+        <mapping class="dragolandia.model.Dragon"/>
 
         
     </session-factory>

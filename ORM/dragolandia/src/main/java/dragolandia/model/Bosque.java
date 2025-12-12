@@ -1,5 +1,7 @@
 package dragolandia.model;
 
+import java.util.ArrayList;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,9 @@ public class Bosque {
     private String nombre;
     private int nivelPeligro;
     private Monstruo monstruoJefe;
+
+    @OneToMany (targetEntity = Monstruo.class)
+    private ArrayList<Monstruo> monstruo = new ArrayList<Monstruo>();
 
     public Bosque(){}
 
