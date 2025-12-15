@@ -12,7 +12,10 @@ public class Monstruo {
 
     private String nombre;
     private int vida;
+
+    @Enumerated(EnumType.STRING)
     private Tipo tipo;
+
     private int fuerza;
 
     public Monstruo(){}
@@ -70,6 +73,7 @@ public class Monstruo {
                 + "]";
     }
 
+    @Transient
     public void atacar(Mago mago){
         int vidaActualizada = mago.getVida() - fuerza;
         mago.setVida(vidaActualizada);

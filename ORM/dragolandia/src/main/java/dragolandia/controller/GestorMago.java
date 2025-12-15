@@ -1,8 +1,11 @@
 package dragolandia.controller;
 
+import java.util.List;
+
 import org.hibernate.*;
 
 import dragolandia.model.Mago;
+import dragolandia.model.hechizos.Conjuro;
 
 public class GestorMago {
     
@@ -11,27 +14,34 @@ public class GestorMago {
      * @param mago
      * @return
      */
-    public boolean addMago(String nombre, int vida, int nivelMagia){
+    public boolean addMago(String nombre, int vida, int nivelMagia, List<Conjuro> conjuros){
 
         boolean added = false;
 
         if(validarMago(nombre, vida, nivelMagia)){
 
-            Mago mago = new Mago(nombre,vida,nivelMagia);
+            Mago mago = new Mago(nombre,vida,nivelMagia,conjuros);
             
             Transaction tx = null;
 
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 
-                tx = session.beginTransaction();
-                session.persist(mago);
-                tx.commit();
+                try {
+                    tx = session.beginTransaction();
+                    session.persist(mago);
+                    tx.commit();
 
-                added = true;
-                System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+".");
+                    added = true;
+                    System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+"."); 
+                } catch (Exception e) {
+                    if(tx != null && tx.isActive()){
+                        tx.rollback();
+                    }
+                    System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
+                }
+
             } catch (Exception e) {
-                if(tx != null) tx.rollback();
-                System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
+                System.err.println("Error en la sesión Hibernate: "+e.getMessage());
                 return added;
             }
         }
@@ -56,7 +66,6 @@ public class GestorMago {
 
             if(mago != null){
                 mago.setVida(hp);
-                session.merge(mago);
                 tx.commit();
 
                 actualizado = true;
@@ -90,7 +99,6 @@ public class GestorMago {
             Mago mago = session.get(Mago.class, id);
             if(mago != null){
                 mago.setNombre(nombre);
-                session.merge(mago);
                 tx.commit();
 
                 actualizado = true;
@@ -126,7 +134,6 @@ public class GestorMago {
 
             if(mago != null){
                 mago.setNivelMagia(nivelMagia);
-                session.merge(mago);
                 tx.commit();
 
                 actualizado = true;

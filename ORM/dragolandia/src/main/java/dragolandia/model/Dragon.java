@@ -1,10 +1,6 @@
 package dragolandia.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "dragon")
@@ -18,15 +14,12 @@ public class Dragon {
     private int intensidadFuego;
     private int resistencia;
 
-    private Bosque bosque;
-
     public Dragon(){}
 
-    public Dragon(String nombre, int intensidadFuego, int resistencia, Bosque bosque){
+    public Dragon(String nombre, int intensidadFuego, int resistencia){
         this.nombre = nombre;
         this.intensidadFuego = intensidadFuego;
         this.resistencia = resistencia;
-        this.bosque = bosque;
     }
 
     public int getId() {
@@ -61,14 +54,7 @@ public class Dragon {
         this.resistencia = resistencia;
     }
 
-    public Bosque getBosque() {
-        return bosque;
-    }
-
-    public void setBosque(Bosque bosque) {
-        this.bosque = bosque;
-    }
-
+    @Transient
     public void exhalar(Monstruo monstruo){
         monstruo.setVida(monstruo.getVida()-intensidadFuego);
     }

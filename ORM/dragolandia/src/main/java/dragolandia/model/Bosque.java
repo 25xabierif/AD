@@ -14,7 +14,14 @@ public class Bosque {
 
     private String nombre;
     private int nivelPeligro;
+
+    @OneToOne
+    @JoinColumn(name = "monstruo_jefe_id")
     private Monstruo monstruoJefe;
+
+    @OneToOne
+    @JoinColumn(name = "dragon_jefe_id")
+    private Dragon dragon;
 
     @OneToMany (targetEntity = Monstruo.class)
     private ArrayList<Monstruo> monstruo = new ArrayList<Monstruo>();
@@ -65,6 +72,7 @@ public class Bosque {
                 + monstruoJefe.getNombre() + "]";
     }
 
+    @Transient
     public void mostrarJefe(){
         System.out.println("Tipo monstruo: "+monstruoJefe.getTipo()+"  \nNombre: "+monstruoJefe.getNombre()+ "\nVida: "+monstruoJefe.getVida()+"\nFuerza: "+monstruoJefe.getFuerza());
     }

@@ -10,7 +10,7 @@
         <property name="hibernate.connection.password">1234..</property>
 
         <!-- Dialecto de MySQL -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> -->
 
         <!-- Configuraciones de Hibernate -->
         <property name="hibernate.hbm2ddl.auto">update</property> 
@@ -25,10 +25,17 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <!-- Registrar entidades -->
-        <mapping class="dragolandia.model.Bosque"/>
-        <mapping class="dragolandia.model.Mago"/>
         <mapping class="dragolandia.model.Monstruo"/>
+        <mapping class="dragolandia.model.Mago"/>
+        <mapping class="dragolandia.model.Bosque"/>
         <mapping class="dragolandia.model.Dragon"/>
+        <mapping class="dragolandia.model.hechizos.Conjuro"/>
+        <mapping class="dragolandia.model.hechizos.BolaFuego"/>
+        <mapping class="dragolandia.model.hechizos.BolaNieve"/>
+        <mapping class="dragolandia.model.hechizos.Debilitar"/>
+        <mapping class="dragolandia.model.hechizos.Escudo"/>
+        <mapping class="dragolandia.model.hechizos.Rayo"/>
+
 
         
     </session-factory>

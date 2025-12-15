@@ -2,7 +2,6 @@ package dragolandia.controller;
 
 import org.hibernate.*;
 
-import dragolandia.model.Bosque;
 import dragolandia.model.Monstruo;
 import dragolandia.model.Tipo;
 

@@ -1,5 +1,9 @@
 package dragolandia.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import dragolandia.model.hechizos.Conjuro;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,12 +18,16 @@ public class Mago {
     private int vida;
     private int nivelMagia;
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private List<Conjuro> conjuros = new ArrayList<>();
+
     public Mago(){}
 
-    public Mago(String nombre, int vida, int nivelMagia){
+    public Mago(String nombre, int vida, int nivelMagia, List<Conjuro> conjuros){
         this.nombre = nombre;
         this.vida = vida;
         this.nivelMagia = nivelMagia;
+        this.conjuros = conjuros;
     }
 
     public int getId() {
@@ -54,11 +62,28 @@ public class Mago {
         this.nivelMagia = nivelMagia;
     }
 
+    public List<Conjuro> getConjuros() {
+        return conjuros;
+    }
+
+    public void setConjuros(List<Conjuro> conjuros) {
+        this.conjuros = conjuros;
+    }
+
+    public void addConjuro(Conjuro conjuro){
+        conjuros.add(conjuro);
+    }
+
+    public void popConjuro(Conjuro conjuro){
+        conjuros.remove(conjuro);
+    }
+
     @Override
     public String toString() {
         return "Mago [id=" + id + ", nombre=" + nombre + ", vida=" + vida + ", nivelMagia=" + nivelMagia + "]";
     }
 
+    @Transient
     public void lanzarHechizo(Monstruo monstruo){
         int vidaActualizada = monstruo.getVida() - nivelMagia;
         monstruo.setVida(vidaActualizada);
