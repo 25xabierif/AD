@@ -29,7 +29,7 @@
         <mapping class="dragolandia.model.Mago"/>
         <mapping class="dragolandia.model.Bosque"/>
         <mapping class="dragolandia.model.Dragon"/>
-        <mapping class="dragolandia.model.hechizos.Conjuro"/>
+        <mapping class="dragolandia.model.hechizos.Hechizo"/>
         <mapping class="dragolandia.model.hechizos.BolaFuego"/>
         <mapping class="dragolandia.model.hechizos.BolaNieve"/>
         <mapping class="dragolandia.model.hechizos.Debilitar"/>

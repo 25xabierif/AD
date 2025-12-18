@@ -3,7 +3,7 @@ package dragolandia.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import dragolandia.model.hechizos.Conjuro;
+import dragolandia.model.hechizos.Hechizo;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,16 +18,16 @@ public class Mago {
     private int vida;
     private int nivelMagia;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private List<Conjuro> conjuros = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Hechizo> hechizos = new ArrayList<>();
 
     public Mago(){}
 
-    public Mago(String nombre, int vida, int nivelMagia, List<Conjuro> conjuros){
+    public Mago(String nombre, int vida, int nivelMagia, List<Hechizo> hechizos){
         this.nombre = nombre;
         this.vida = vida;
         this.nivelMagia = nivelMagia;
-        this.conjuros = conjuros;
+        this.hechizos = hechizos;
     }
 
     public int getId() {
@@ -62,25 +62,25 @@ public class Mago {
         this.nivelMagia = nivelMagia;
     }
 
-    public List<Conjuro> getConjuros() {
-        return conjuros;
+    public List<Hechizo> getHechizos() {
+        return hechizos;
     }
 
-    public void setConjuros(List<Conjuro> conjuros) {
-        this.conjuros = conjuros;
+    public void setHechizos(List<Hechizo> hechizos) {
+        this.hechizos = hechizos;
     }
 
-    public void addConjuro(Conjuro conjuro){
-        conjuros.add(conjuro);
+    public void addConjuro(Hechizo hechizo){
+        hechizos.add(hechizo);
     }
 
-    public void popConjuro(Conjuro conjuro){
-        conjuros.remove(conjuro);
+    public void popConjuro(Hechizo hechizo){
+        hechizos.remove(hechizo);
     }
 
     @Override
     public String toString() {
-        return "Mago [id=" + id + ", nombre=" + nombre + ", vida=" + vida + ", nivelMagia=" + nivelMagia + "]";
+        return "Mago id=" + id + ", nombre=" + nombre + ", vida=" + vida + ", nivelMagia=" + nivelMagia + ".";
     }
 
     @Transient

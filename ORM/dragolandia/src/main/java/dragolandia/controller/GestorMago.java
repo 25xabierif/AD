@@ -1,11 +1,12 @@
 package dragolandia.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.*;
 
 import dragolandia.model.Mago;
-import dragolandia.model.hechizos.Conjuro;
+import dragolandia.model.hechizos.Hechizo;
 
 public class GestorMago {
     
@@ -14,20 +15,28 @@ public class GestorMago {
      * @param mago
      * @return
      */
-    public boolean addMago(String nombre, int vida, int nivelMagia, List<Conjuro> conjuros){
+    public boolean addMago(String nombre, int vida, int nivelMagia, List<Hechizo> hechizos){
 
         boolean added = false;
 
         if(validarMago(nombre, vida, nivelMagia)){
-
-            Mago mago = new Mago(nombre,vida,nivelMagia,conjuros);
             
             Transaction tx = null;
 
-            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-                
+            try (Session session = HibernateUtil.getSessionFactory().getCurrentSession()) {
+
                 try {
                     tx = session.beginTransaction();
+
+                    List<Hechizo> hechizosMerged = new ArrayList<>();
+
+                    for (Hechizo hechizo : hechizos) {
+                        Hechizo hechizoMerged = session.merge(hechizo);
+                        hechizosMerged.add(hechizoMerged);
+                    }
+
+                    Mago mago = new Mago(nombre, vida, nivelMagia, hechizosMerged);
+
                     session.persist(mago);
                     tx.commit();
 
