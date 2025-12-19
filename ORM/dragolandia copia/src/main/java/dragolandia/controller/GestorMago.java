@@ -7,7 +7,6 @@ import org.hibernate.*;
 
 import dragolandia.model.Mago;
 import dragolandia.model.hechizos.Hechizo;
-import jakarta.persistence.EntityManager;
 
 public class GestorMago {
     
@@ -24,22 +23,22 @@ public class GestorMago {
             
             Transaction tx = null;
 
-            try (EntityManager em = HibernateUtil.getEntityManager()) {
+            try (Session session = HibernateUtil.getSessionFactory().getCurrentSession()) {
 
                 try {
-                    em.getTransaction().begin();
+                    tx = session.beginTransaction();
 
                     List<Hechizo> hechizosMerged = new ArrayList<>();
 
                     for (Hechizo hechizo : hechizos) {
-                        Hechizo hechizoMerged = em.merge(hechizo);
+                        Hechizo hechizoMerged = session.merge(hechizo);
                         hechizosMerged.add(hechizoMerged);
                     }
 
                     Mago mago = new Mago(nombre, vida, nivelMagia, hechizosMerged);
 
-                    em.persist(mago);
-                    em.getTransaction().commit();
+                    session.persist(mago);
+                    tx.commit();
 
                     added = true;
                     System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+"."); 

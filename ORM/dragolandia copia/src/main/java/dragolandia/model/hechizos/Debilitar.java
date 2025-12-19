@@ -8,16 +8,19 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("BOLA_FUEGO")
-public class BolaFuego extends Hechizo{
+@DiscriminatorValue("DEBILITAR")
+public class Debilitar extends Hechizo{
 
-    public BolaFuego(){
-        super("Bola de Fuego",50,0);
+    public Debilitar(){
+        super("Debilitar",0,60);
     }
 
     @Override
     public void efecto(Mago mago, List<Monstruo> objetivos) {
-       objetivos.forEach(monstruo -> monstruo.setVida(monstruo.getVida()-(super.getDamage()+mago.getNivelMagia())/2)); 
+        objetivos.forEach(monstruo -> {
+            int fuerzaFinal = (int)monstruo.getFuerza()*(super.getDebuff())/100;
+            monstruo.setFuerza(fuerzaFinal);
+        });
     }
 
     @Override

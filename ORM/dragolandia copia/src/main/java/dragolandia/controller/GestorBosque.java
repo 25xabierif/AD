@@ -18,8 +18,8 @@ public class GestorBosque {
         if(validarBosque(nombre, nivelPeligro)){
 
             Transaction tx = null;
-
-            try (Session session = HibernateUtil.getEntityManager()) {
+            
+            try (Session session = HibernateUtil.getSessionFactory().getCurrentSession()) {
                 
                 try {
                     
