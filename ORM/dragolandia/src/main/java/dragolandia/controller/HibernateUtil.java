@@ -15,7 +15,7 @@ public class HibernateUtil {
         return xestorEntidades.createEntityManager();
     }
 
-    // Método para cerrar el SessionFactory cuando termine la aplicación
+    // Método para cerrar el EntityManagerFactory cuando termine la aplicación
     public static void shutdown() {
         if (xestorEntidades.isOpen()) {
             xestorEntidades.close();

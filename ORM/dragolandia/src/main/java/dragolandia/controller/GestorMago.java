@@ -21,8 +21,6 @@ public class GestorMago {
         boolean added = false;
 
         if(validarMago(nombre, vida, nivelMagia)){
-            
-            Transaction tx = null;
 
             try (EntityManager em = HibernateUtil.getEntityManager()) {
 
@@ -44,9 +42,6 @@ public class GestorMago {
                     added = true;
                     System.out.println("Mago registrado con éxito en la BD con id: "+mago.getId()+"."); 
                 } catch (Exception e) {
-                    if(tx != null && tx.isActive()){
-                        tx.rollback();
-                    }
                     System.err.println("No se ha podido registrar el mago en la BD: "+e.getMessage());
                 }
 
@@ -66,24 +61,29 @@ public class GestorMago {
         
         boolean actualizado = false;
 
-        Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            
-            tx = session.beginTransaction();
+        try (EntityManager em = HibernateUtil.getEntityManager()) {
 
-            Mago mago = session.get(Mago.class, id);
+            try {
 
-            if(mago != null){
-                mago.setVida(hp);
-                tx.commit();
+                em.getTransaction().begin();
+                
+                Mago mago = em.find(Mago.class, id);
 
-                actualizado = true;
-                System.out.println("HP actual: "+mago.getVida());
+                if(mago != null){
+                    mago.setVida(hp);
+                    em.merge(mago);
+                    em.getTransaction().commit();
+
+                    actualizado = true;
+                    System.out.println("HP actual: "+mago.getVida());
+                }
+
+            } catch (Exception e) {
+                System.err.println("No se ha podido actualizar la vida del mago: "+e.getMessage());
             }
 
         } catch (Exception e) {
-            if(tx != null) tx.rollback();
-            System.err.println("No se ha podido actualizar la vida del mago: "+e.getMessage());
+            System.err.println("No se ha podido acceder a la sesión: "+e.getMessage());
         }
         return actualizado;
     }

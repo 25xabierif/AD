@@ -1,0 +1,9 @@
+
+    En el producto la categoriaid es de tipo Categoria
+    no añadimos métodos setId cuando tenemos los id como autoincrementales
+    falta el metodo toString para visualizar la informacion de un objeto
+    en los controladores no hacemos validaciones con respecto a datos introducidos por consola ni les mostramos mensajes.... incumple el MVC
+    en los catch de las operaciones CRUD hacemos rollback de la transaccion
+    el metodo updateName en producto actualiza el precio, la categoria...
+    falta la operacion consultar entidades por id
+     
