@@ -1,0 +1,43 @@
+{
+    "mediciones":
+    [
+        {
+            "sensorId":1,
+            "fecha": new Date("2026-01-22"),
+            "tipo (“temp”,“hum”)": "temp",
+            "valor":8,
+            "ubicacion":"O Barro"
+        },
+        {
+            "sensorId":2,
+            "ts":new Date("2026-01-12"),
+            "tipo (“temp”,“hum”)": "temp",
+            "valor":6,
+            "ubicacion":"O Barro"
+        },
+        {
+            "sensorId":3,
+            "ts":new Date("2026-01-23"),
+            "tipo (“temp”,“hum”)": "hum",
+            "valor":167,
+            "ubicacion":"O Barro"
+        }
+    ]
+
+}
+
+
+{
+    $and:[
+        {sensorId:3},
+        {ts:{
+            $gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+        }}
+    ]
+}
+{
+    {valor:{
+        $gte: 7
+    }}
+}
+

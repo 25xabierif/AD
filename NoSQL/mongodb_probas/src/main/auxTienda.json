@@ -1,0 +1,71 @@
+{
+    "clientes":
+    [
+        {
+            "idCliente":1,
+            "nombre":"Xabier",
+            "emails": [
+                "xabier@cousa.com",
+                "xabierIF@cousacousa.es"
+            ],
+            "direcciones": [
+                "Calle del río 105, 1B, 15368 Dalaran",
+                "Avenida del tuerto 5, 4A, 12664 Orgrimmar"
+            ]
+        },
+        {
+            "idCliente":2,
+            "nombre":"Álvaro",
+            "emails": [
+                "alvaro@cousa.com",
+                "alvaroIF@cousacousa.es"
+            ],
+            "direcciones": [
+                "Lugar sobreForja 4, 2B, 15368 Forjaz",
+                "Descenso del trueno 5, 5A, 12664 Ventormenta"
+            ]
+        }
+    ]
+
+},
+{
+    "pedidos":
+    [
+        {
+            "idPedido":1,
+            "idCliente":1,
+            "fecha": new Date("2025-11-24"),
+            "lineas": {
+                "sku": "Nin-GBC",
+                "nombre": "Nintendo GameBoyColor",
+                "cantidad": 1,
+                "precio": 100
+            },
+            "estado": "Recibido"
+        },
+        {
+            "idPedido":2,
+            "idCliente":2,
+            "fecha": new Date("2026-1-20"),
+            "lineas": {
+                "sku": "Mag-FUN",
+                "nombre": "Fundas Cartas Magic",
+                "cantidad": 200,
+                "precio": 0.3
+            },
+            "estado": "En proceso de envío"
+        },
+        {
+            "idPedido":3,
+            "idCliente":2,
+            "fecha": new Date("2025-12-20"),
+            "lineas": {
+                "sku": "Choc-Prot",
+                "nombre": "Proteínas Sabor Chocolate",
+                "cantidad": 2,
+                "precio": 60
+            },
+            "estado": "En espera de Stock"
+        }
+    ]
+}
