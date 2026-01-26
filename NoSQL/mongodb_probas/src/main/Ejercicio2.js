@@ -1,5 +1,5 @@
 {
-    "clientes":
+    "clientes"
     [
         {
             "idCliente":1,
@@ -27,9 +27,9 @@
         }
     ]
 
-},
+}
 {
-    "pedidos":
+    "pedidos"
     [
         {
             "idPedido":1,
@@ -69,3 +69,32 @@
         }
     ]
 }
+
+//Muestra los pedidos que cumplen que cantidad > 100 añadiendo un nuevo campo cantidadTotal que 
+//es la suma de los campos cantidad contenidos en líneas
+db.pedidos.aggregate([
+    {$project: {
+            _id: 0,
+            idPedido: 1,
+            idCliente: 1,
+            fecha: 1,
+            estado: 1,
+            cantidadTotal: {$sum: "$lineas.cantidad"}
+        }},
+    {$match: {cantidadTotal: {$gt:100}}}
+])
+
+//Muestra las líneas que cumplen que la cantidad > 100
+db.pedidos.aggregate([
+    {$unwind: "$lineas"},
+    {$match: {cantidadTotal: {$gt:100}}},
+    {$project: {
+            _id: 0,
+            idPedido: 1,
+            idCliente: 1,
+            fecha: 1,
+            estado: 1,
+            cantidadTotal: {$sum: "$lineas.cantidad"}
+        }}
+])
+
