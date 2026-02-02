@@ -48,7 +48,7 @@ public final class MongoProvider implements AutoCloseable {
         this.collection = database.getCollection(colName);
     }
 
-    public static MongoProvider getInstance(){
+    public static synchronized MongoProvider getInstance(){
         if(mongoProviderUtil == null){
             mongoProviderUtil = new MongoProvider();
         }
@@ -62,6 +62,10 @@ public final class MongoProvider implements AutoCloseable {
      */
     public MongoCollection<Document> empleados() {
         return collection;
+    }
+
+    public MongoCollection<Document> getCollection(String collectionName){
+        return database.getCollection(collectionName);
     }
 
     /**

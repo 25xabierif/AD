@@ -9,6 +9,7 @@ public class Empleado {
     private int depNum;
     private int salario;
     private Date fechaAlta;
+    
     private String oficio;
     private int comision;
     
